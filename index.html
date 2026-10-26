@@ -1,0 +1,64 @@
+// Gabinete Parametrico Art-Net WT32-ETH01 para Bambu Lab H2S
+// Dimensões em Milímetros (Escala 1:1)
+
+box_w = 142;
+box_d = 102;
+box_h = 48;
+wall = 2.5;
+
+module gabinete_base() {
+    difference() {
+        // Corpo Externo
+        cube([box_w, box_d, box_h]);
+        
+        // Cavidade Interna
+        translate([wall, wall, wall])
+            cube([box_w - (wall*2), box_d - (wall*2), box_h]);
+            
+        // Janela RJ45 (Frontal)
+        translate([71.9, -1, 10.6])
+            cube([16.2, wall + 2, 13.6]);
+            
+        // Janela USB-C (Frontal)
+        translate([46.3, -1, 10.6])
+            cube([9.4, wall + 2, 3.6]);
+            
+        // Janela Borne Fita LED (Frontal)
+        translate([109.1, -1, 10.6])
+            cube([10.8, wall + 2, 8.5]);
+            
+        // Furo Entrada AC Traseiro (PG7)
+        translate([20, box_d - wall - 1, 24])
+            rotate([90, 0, 0])
+            cylinder(h=wall+2, r=6.2, $fn=50);
+            
+        // Saída Relés Traseira
+        translate([110, box_d - wall - 1, 18])
+            cube([18, wall + 2, 12]);
+    }
+    
+    // Torres M3 para fixação da PCB nos 4 cantos internos
+    pcb_standoffs();
+}
+
+module pcb_standoffs() {
+    // Coordenadas baseadas no furo M3 da PCB
+    offsets = [
+        [11, 11],
+        [box_w - 11, 11],
+        [11, box_d - 11],
+        [box_w - 11, box_d - 11]
+    ];
+    
+    for (pos = offsets) {
+        translate([pos[0], pos[1], wall])
+        difference() {
+            cylinder(h=6.0, r=4.5, $fn=30);
+            translate([0,0,-1])
+                cylinder(h=8.0, r=1.6, $fn=30); // Furo M3
+        }
+    }
+}
+
+// Renderiza a base do gabinete
+gabinete_base();
