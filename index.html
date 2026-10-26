@@ -1,64 +1,853 @@
-// Gabinete Parametrico Art-Net WT32-ETH01 para Bambu Lab H2S
-// Dimensões em Milímetros (Escala 1:1)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art-Net Node WT32-ETH01 + Shield USB-C | PCB Face Única & Gabinete 1:1</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --panel: #111827;
+    --card: #161f33;
+    --border: #26334d;
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --ok: #10b981;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --copper: #d97706;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 12px;
+    line-height: 1.45;
+  }
+  .app-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+  }
+  .top-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #0d1322;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand h1 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .brand span {
+    font-size: 0.75rem;
+    background: rgba(99, 102, 241, 0.18);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .mode-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .mode-switch select {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    outline: none;
+  }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    background: #0f172a;
+    border-bottom: 1px solid var(--border);
+    padding: 0 10px;
+  }
+  .tab-btn {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 16px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: #fff;
+    border-bottom-color: var(--accent);
+    background: rgba(99, 102, 241, 0.08);
+  }
+  .tab-content {
+    display: none;
+    padding: 18px;
+  }
+  .tab-content.active { display: block; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    background: var(--card);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 13px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--accent-hover); }
+  .btn-outline {
+    background: #1e293b;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-outline:hover { background: #334155; }
+  .btn-ok { background: var(--ok); }
+  .btn-ok:hover { background: #059669; }
+  .canvas-box {
+    background: #070a12;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    overflow-x: auto;
+    text-align: center;
+  }
+  svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .info-card h3 {
+    font-size: 0.85rem;
+    color: #a5b4fc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .spec-list {
+    list-style: none;
+    font-size: 0.82rem;
+  }
+  .spec-list li {
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(148,163,184,0.15);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .spec-list li:last-child { border-bottom: none; }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+  table.data-table th, table.data-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+  }
+  table.data-table th {
+    background: #0f172a;
+    color: #a5b4fc;
+  }
+  table.data-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+  .sim-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 820px) {
+    .sim-grid { grid-template-columns: 1fr; }
+  }
+  .led-strip-preview {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 5px;
+    padding: 12px;
+    background: #05070d;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+  .led-dot {
+    height: 18px;
+    border-radius: 4px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    transition: background 0.08s, box-shadow 0.08s;
+  }
+  .relay-bank {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .relay-box {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+  .relay-box.on {
+    border-color: var(--ok);
+    background: rgba(16, 185, 129, 0.16);
+    color: #6ee7b7;
+    font-weight: 700;
+  }
+  .form-control {
+    width: 100%;
+    padding: 7px 9px;
+    background: #0b0f19;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 5px;
+    font-size: 0.82rem;
+    margin-top: 4px;
+    margin-bottom: 10px;
+  }
+  .chk-inline {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 6px 0 12px;
+    font-size: 0.82rem;
+  }
+</style>
+</head>
+<body>
 
-box_w = 142;
-box_d = 102;
-box_h = 48;
-wall = 2.5;
+<div class="app-shell">
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="brand">
+      <h1>⚡ Art-Net Node WT32-ETH01 + Shield USB-C</h1>
+      <span>PCB 100% Face Única (Bottom Layer) + Gabinete 1:1</span>
+    </div>
+    <div class="mode-switch">
+      <label for="usbLayoutSelect">Disposição USB-C / RJ45:</label>
+      <select id="usbLayoutSelect" onchange="updateLayoutMode()">
+        <option value="front">Modo A: RJ45 + USB-C Lado a Lado no Painel Frontal</option>
+        <option value="stack">Modo B: Stack Duplo (RJ45 Frontal / USB-C Traseiro)</option>
+      </select>
+    </div>
+  </div>
 
-module gabinete_base() {
-    difference() {
-        // Corpo Externo
-        cube([box_w, box_d, box_h]);
-        
-        // Cavidade Interna
-        translate([wall, wall, wall])
-            cube([box_w - (wall*2), box_d - (wall*2), box_h]);
-            
-        // Janela RJ45 (Frontal)
-        translate([71.9, -1, 10.6])
-            cube([16.2, wall + 2, 13.6]);
-            
-        // Janela USB-C (Frontal)
-        translate([46.3, -1, 10.6])
-            cube([9.4, wall + 2, 3.6]);
-            
-        // Janela Borne Fita LED (Frontal)
-        translate([109.1, -1, 10.6])
-            cube([10.8, wall + 2, 8.5]);
-            
-        // Furo Entrada AC Traseiro (PG7)
-        translate([20, box_d - wall - 1, 24])
-            rotate([90, 0, 0])
-            cylinder(h=wall+2, r=6.2, $fn=50);
-            
-        // Saída Relés Traseira
-        translate([110, box_d - wall - 1, 18])
-            cube([18, wall + 2, 12]);
+  <!-- NAVIGATION TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab('tab-pcb', this)">1. Layout PCB Face Única (1:1)</button>
+    <button class="tab-btn" onclick="openTab('tab-front', this)">2. Gabinete & Painel Frontal (RJ45 + USB-C)</button>
+    <button class="tab-btn" onclick="openTab('tab-laser', this)">3. Planificação 6 Faces (Corte Laser 1:1)</button>
+    <button class="tab-btn" onclick="openTab('tab-netlist', this)">4. Netlist & Guia CorelDraw</button>
+    <button class="tab-btn" onclick="openTab('tab-sim', this)">5. Simulador Web & Bancada 24V</button>
+  </div>
+
+  <!-- TAB 1: PCB FACE UNICA -->
+  <div id="tab-pcb" class="tab-content active">
+    <div class="toolbar">
+      <div class="btn-group">
+        <button class="btn" onclick="setPcbView('color')">Visão Completa (Componentes + Trilhas)</button>
+        <button class="btn btn-outline" onclick="setPcbView('etch')">Modo Corrosão P&B (Apenas Cobre + Ilhas)</button>
+        <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px; margin-left:6px; cursor:pointer;">
+          <input type="checkbox" id="mirrorPcbChk" onchange="renderPcbSvg()"> Espelhar Horizontal (Transferência Térmica)
+        </label>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-ok" onclick="downloadSvg('pcbSvgContainer', 'PCB_FaceUnica_ArtNet_130x90mm_1to1.svg')">⬇ Baixar SVG 1:1 (CorelDraw)</button>
+      </div>
+    </div>
+
+    <div class="canvas-box" id="pcbSvgContainer"></div>
+
+    <div class="grid-2">
+      <div class="info-card">
+        <h3>Destaques da Placa 100% Face Única (130.0 × 90.0 mm)</h3>
+        <ul class="spec-list">
+          <li><span>Camada de Cobre:</span> <strong>100% Face Única (Bottom Copper - Sem Jumpers)</strong></li>
+          <li><span>Fonte Interna Soldada:</span> <strong>Mean Well IRM-15-5 / HLK-15M05 (5V 3A - 15W)</strong></li>
+          <li><span>Porta RJ45 (WT32-ETH01):</span> <strong>Borda Frontal X = 74.0 mm (Avanço 2.5 mm)</strong></li>
+          <li><span>Shield Gravadora USB-C:</span> <strong id="usbCoordLabel">Borda Frontal X = 45.0 mm (Aparente na Caixa)</strong></li>
+          <li><span>Borne Exclusivo Fita LED:</span> <strong>Borda Frontal X = 108.5 mm (SINAL 5V + GND)</strong></li>
+          <li><span>Saída para 10 Relés:</span> <strong>Barra/Borne 12 Vias Lateral Direita (Univ. 3)</strong></li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Isolamento Galvânico & Malha Estrela</h3>
+        <ul class="spec-list">
+          <li><span>Entrada AC 110/220V:</span> <strong>Fusível 1A + Varistor 10D471K + Rasgo 2.4mm</strong></li>
+          <li><span>Linha +5V Suja (Bobinas Relés):</span> <strong>Trilha 2.5 mm + Cap. C1 1000µF/16V</strong></li>
+          <li><span>Linha +5V Limpa (WT32 + USB-C):</span> <strong>Trilha 1.2 mm + Cap. C2 470µF + C3 100nF</strong></li>
+          <li><span>Buffer Sinal LED 24V:</span> <strong>CI 74HCT125N (DIP-14) + Resistor 330 Ω</strong></li>
+          <li><span>Referência Externa 24V:</span> <strong>GND Interno unido ao GND da Fonte 24V no Borne LED</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: GABINETE & PAINEL FRONTAL -->
+  <div id="tab-front" class="tab-content">
+    <div class="toolbar">
+      <div class="btn-group">
+        <span style="font-size:0.82rem; color:var(--muted);">Gabarito Mecânico de Recorte Exato para deixar apenas o USB-C, RJ45 e Borne LED aparentes no painel.</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-ok" onclick="downloadSvg('frontPanelSvgContainer', 'Painel_Frontal_Recortes_1to1.svg')">⬇ Baixar Gabarito Frontal (.SVG 1:1)</button>
+      </div>
+    </div>
+
+    <div class="canvas-box" id="frontPanelSvgContainer"></div>
+
+    <div class="grid-2">
+      <div class="info-card">
+        <h3>Cotas Exatas de Recorte no Painel Frontal (Chapa 3.0 mm)</h3>
+        <ul class="spec-list">
+          <li><span>Dimensão Externa do Painel Frontal:</span> <strong>142.0 × 48.0 mm</strong></li>
+          <li><span>Topo da PCB (Espaçador M3 de 6mm):</span> <strong>Z = 10.6 mm a partir da base externa</strong></li>
+          <li><span>Janela Porta USB-C (Shield):</span> <strong>9.4 × 3.6 mm (Centro em X = 51.0 mm)</strong></li>
+          <li><span>Janela Porta RJ45 (WT32-ETH01):</span> <strong>16.2 × 13.6 mm (Centro em X = 80.0 mm)</strong></li>
+          <li><span>Janela Borne Fita LED (SINAL + GND):</span> <strong>10.8 × 8.5 mm (Centro em X = 114.5 mm)</strong></li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Fixação Mecânica Interna</h3>
+        <ul class="spec-list">
+          <li><span>Espaçadores da PCB (Standoffs):</span> <strong>4× M3 × 6.0 mm (Furos Ø 3.2 mm nos cantos)</strong></li>
+          <li><span>Altura Livre Interna da Caixa:</span> <strong>42.0 mm (Folga de 14 mm acima da fonte IRM-15-5)</strong></li>
+          <li><span>Passagem Cabos Relés e AC:</span> <strong>Painel Traseiro com Prensa-Cabo PG7 + Saída 10 Relés</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: PLANIFICAÇÃO CORTE LASER 6 FACES -->
+  <div id="tab-laser" class="tab-content">
+    <div class="toolbar">
+      <div class="btn-group">
+        <span style="font-size:0.82rem; color:var(--muted);">Planificação completa das 6 faces com encaixes Finger-Joint para Acrílico ou MDF de 3.0 mm (Vermelho = Corte / Azul = Gravação).</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-ok" onclick="downloadSvg('laserSvgContainer', 'Caixa_Completa_6_Faces_Laser_3mm.svg')">⬇ Baixar Planificação Completa (.SVG 1:1)</button>
+      </div>
+    </div>
+
+    <div class="canvas-box" id="laserSvgContainer"></div>
+  </div>
+
+  <!-- TAB 4: NETLIST & CORELDRAW -->
+  <div id="tab-netlist" class="tab-content">
+    <div class="grid-2" style="margin-top:0; margin-bottom:14px;">
+      <div class="info-card">
+        <h3>Larguras de Trilha para CorelDraw</h3>
+        <ul class="spec-list">
+          <li><span>Fase (L) e Neutro (N) 110/220V AC:</span> <strong>2.0 mm (Isolamento mín. 4.5 mm)</strong></li>
+          <li><span>Barramento +5V Relés e Malha GND:</span> <strong>2.5 mm</strong></li>
+          <li><span>Alimentação +5V Lógica (WT32 / Shield / 74HCT125):</span> <strong>1.2 mm</strong></li>
+          <li><span>Sinal Dados LED 5V (Pino 3 do 74HCT125 -> R1 -> Borne):</span> <strong>1.0 mm</strong></li>
+          <li><span>Sinais de Controle Relés (CH1 a CH10) e UART RX/TX:</span> <strong>0.65 mm</strong></li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Diâmetro de Ilhas (Pads) e Brocas</h3>
+        <ul class="spec-list">
+          <li><span>Pinos Fonte IRM-15-5 / HLK-15M05 e Varistor:</span> <strong>Ilha Ø 3.2 mm / Furo Ø 1.2 mm</strong></li>
+          <li><span>Bornes KRE (AC e Saída Fita LED):</span> <strong>Ilha Ø 3.4 mm / Furo Ø 1.3 mm</strong></li>
+          <li><span>Barras WT32-ETH01, Shield USB-C e Header Relés:</span> <strong>Ilha Ø 2.2 mm / Furo Ø 0.9 mm</strong></li>
+          <li><span>CI 74HCT125N (DIP-14) e Resistor 330 Ω:</span> <strong>Ilha Ø 2.0 mm / Furo Ø 0.8 mm</strong></li>
+          <li><span>Furos de Fixação da Placa (4 Cantos M3):</span> <strong>Ilha Ø 6.0 mm / Furo Ø 3.2 mm</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>Tabela Completa de Conexões (Netlist Pin-a-Pin)</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rede (Net)</th>
+            <th>Origem (Componente / Pino)</th>
+            <th>Destino (Componente / Pino)</th>
+            <th>Função no Sistema</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>AC_FASE</strong></td><td>Borne AC (L)</td><td>Fusível F1 (1A) &rarr; Varistor RV1 &rarr; Fonte AC/L</td><td>Entrada Rede 110/220V Protegida</td></tr>
+          <tr><td><strong>AC_NEUTRO</strong></td><td>Borne AC (N)</td><td>Varistor RV1 &rarr; Fonte AC/N</td><td>Retorno Rede AC</td></tr>
+          <tr><td><strong>+5V_GERAL</strong></td><td>Fonte +V (5V / 3A)</td><td>C1 (1000µF), C2 (470µF), WT32 (5V), Shield (5V), 74HCT125 (Pino 14), Header Relés (VCC)</td><td>Alimentação Dupla Carga (3000 mA)</td></tr>
+          <tr><td><strong>GND_COMUM</strong></td><td>Fonte -V (GND)</td><td>WT32 (GND), Shield (GND), 74HCT125 (Pinos 1,4,5,7,9,10,12,13), Header Relés (GND), <strong>Borne Fita LED (GND)</strong></td><td>Referência Geral + União com Fonte 24V</td></tr>
+          <tr><td><strong>UART_PROG</strong></td><td>Shield USB-C (TX / RX / IO0 / EN)</td><td>WT32-ETH01 (RX0 / TX0 / IO0 / EN)</td><td>Gravação USB-C com Auto-Reset</td></tr>
+          <tr><td><strong>LED_DATA_3V3</strong></td><td>WT32-ETH01 (IO2 / GPIO 2)</td><td>CI 74HCT125N — Pino 2 (Entrada 1A)</td><td>Sinal Digital 800kHz (3.3V)</td></tr>
+          <tr><td><strong>LED_DATA_5V</strong></td><td>CI 74HCT125N — Pino 3 (Saída 1Y)</td><td>Resistor R1 (330 Ω) &rarr; <strong>Borne Fita LED (SINAL)</strong></td><td>Sinal Convertido 5V TTL para Fita 24V</td></tr>
+          <tr><td><strong>RELÉ 1 a 6</strong></td><td>WT32 (IO4, IO12, IO14, IO15, IO32, IO33)</td><td>Conector Relés (CH1 a CH6)</td><td>Acionamento Universo Art-Net 3 (Canais 1–6)</td></tr>
+          <tr><td><strong>RELÉ 7 a 10</strong></td><td>WT32 (IO5/RXD, IO17/TXD, IO1/TX0, IO3/RX0)</td><td>Conector Relés (CH7 a CH10)</td><td>Acionamento Universo Art-Net 3 (Canais 7–10)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 5: SIMULADOR INTERATIVO DE BANCADA -->
+  <div id="tab-sim" class="tab-content">
+    <div class="sim-grid">
+      <div class="info-card">
+        <h3>Painel Web Embarcado (WT32-ETH01)</h3>
+        <label style="font-size:0.75rem; color:var(--muted);">Endereço IP / Sub-rede</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input type="text" class="form-control" value="192.168.0.252">
+          <input type="text" class="form-control" value="255.255.255.0">
+        </div>
+
+        <label style="font-size:0.75rem; color:var(--muted);">Sequência de Bytes da Fita (RGB, RGBW, WRGB, GRBW)</label>
+        <input type="text" id="simColorOrder" class="form-control" value="RGBW">
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted);">Qtd. LEDs (24V)</label>
+            <input type="text" class="form-control" value="256">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted);">Módulo de Relés (Univ. 3)</label>
+            <select id="simRelayCount" class="form-control" onchange="renderRelayBank()">
+              <option value="1">1 Canal</option>
+              <option value="2">2 Canais</option>
+              <option value="4">4 Canais</option>
+              <option value="10" selected>10 Canais</option>
+            </select>
+          </div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:10px 0;">
+
+        <label style="font-size:0.75rem; color:var(--muted);">Padrão do Modo de Teste Autônomo</label>
+        <select id="simTestMode" class="form-control">
+          <option value="1">1. Fita Acesa Inteira (ON/OFF)</option>
+          <option value="2">2. Teste Pixel a Pixel (Varredura)</option>
+          <option value="3" selected>3. Efeito Vai e Vem (Bounce)</option>
+          <option value="4">4. Teste Sequencial de Relés</option>
+        </select>
+
+        <div class="chk-inline">
+          <label><input type="checkbox" id="chkR" checked> Red (R)</label>
+          <label><input type="checkbox" id="chkG"> Green (G)</label>
+          <label><input type="checkbox" id="chkB" checked> Blue (B)</label>
+          <label><input type="checkbox" id="chkW"> White (W)</label>
+        </div>
+
+        <button class="btn" style="width:100%;" onclick="toggleSimRunning()" id="simToggleBtn">⏸ Pausar Simulação de Bancada</button>
+      </div>
+
+      <div class="info-card">
+        <h3>Visualização em Tempo Real — Saída Borne Fita LED 24V + Relés</h3>
+        <p style="font-size:0.78rem; color:var(--muted); margin-bottom:8px;">
+          Amostra de 32 pixels da fita 24V (conectada ao borne frontal <strong>SINAL + GND</strong>) e estado físico dos relés ativos:
+        </p>
+        <div class="led-strip-preview" id="simLedGrid"></div>
+
+        <h3 style="margin-top:16px;">Banco de Relés — Universo Art-Net 3 Separado</h3>
+        <div class="relay-bank" id="simRelayGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let pcbViewMode = 'color';
+  let layoutMode = 'front';
+  let simRunning = true;
+  let simTick = 0;
+  let bouncePos = 0;
+  let bounceDir = 1;
+
+  function openTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function setPcbView(mode) {
+    pcbViewMode = mode;
+    renderPcbSvg();
+  }
+
+  function updateLayoutMode() {
+    layoutMode = document.getElementById('usbLayoutSelect').value;
+    const lbl = document.getElementById('usbCoordLabel');
+    if (layoutMode === 'front') {
+      lbl.textContent = 'Borda Frontal X = 45.0 mm (Lado a lado com RJ45)';
+    } else {
+      lbl.textContent = 'Borda Traseira X = 74.0 mm (Stack sob WT32)';
     }
-    
-    // Torres M3 para fixação da PCB nos 4 cantos internos
-    pcb_standoffs();
-}
+    renderPcbSvg();
+    renderFrontPanelSvg();
+    renderLaserSvg();
+  }
 
-module pcb_standoffs() {
-    // Coordenadas baseadas no furo M3 da PCB
-    offsets = [
-        [11, 11],
-        [box_w - 11, 11],
-        [11, box_d - 11],
-        [box_w - 11, box_d - 11]
-    ];
-    
-    for (pos = offsets) {
-        translate([pos[0], pos[1], wall])
-        difference() {
-            cylinder(h=6.0, r=4.5, $fn=30);
-            translate([0,0,-1])
-                cylinder(h=8.0, r=1.6, $fn=30); // Furo M3
-        }
+  // RENDERIZADOR 1: PCB FACE ÚNICA REAL (BOTTOM LAYER) 130x90mm (1:1)
+  function renderPcbSvg() {
+    const isEtch = (pcbViewMode === 'etch');
+    const isMirror = document.getElementById('mirrorPcbChk').checked;
+    const bgCol = isEtch ? '#ffffff' : '#081c15';
+    const traceCol = isEtch ? '#000000' : '#d97706';
+    const padCol = isEtch ? '#000000' : '#fbbf24';
+    const drillCol = isEtch ? '#ffffff' : '#081c15';
+    const silkCol = isEtch ? 'none' : '#e2e8f0';
+
+    const usbX = (layoutMode === 'front') ? 38 : 65;
+    const usbY = (layoutMode === 'front') ? 66 : 6;
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="130mm" height="90mm" viewBox="0 0 130 90">`;
+    svg += `<rect width="130" height="90" fill="${bgCol}" stroke="#334155" stroke-width="0.4"/>`;
+
+    if (isMirror) {
+      svg += `<g transform="translate(130,0) scale(-1,1)">`;
+    } else {
+      svg += `<g>`;
     }
-}
 
-// Renderiza a base do gabinete
-gabinete_base();
+    // Furos de Fixação M3 nos 4 cantos
+    const mounts = [[5,5],[125,5],[5,85],[125,85]];
+    mounts.forEach(([mx,my]) => {
+      svg += `<circle cx="${mx}" cy="${my}" r="3.0" fill="${padCol}"/>`;
+      svg += `<circle cx="${mx}" cy="${my}" r="1.6" fill="${drillCol}"/>`;
+    });
+
+    // Rasgo de Isolamento Galvânico AC/DC (Slot 2.4mm)
+    svg += `<rect x="29" y="12" width="2.4" height="32" rx="1" fill="${drillCol}" stroke="${isEtch?'#000':'#ef4444'}" stroke-width="0.3"/>`;
+
+    // TRILHAS 100% FACE ÚNICA (BOTTOM COPPER - SEM CRUZAMENTOS)
+    // Entrada AC -> Fusível -> Varistor -> Fonte IRM-15-5
+    svg += `<path d="M 10 78 L 10 60 M 10 46 L 10 20 L 20 20" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+    svg += `<path d="M 15.08 78 L 15.08 34 L 20 34" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+
+    // Saída Fonte +5V (Pino +V em 54,34) e GND (Pino -V em 54,20)
+    // Linha +5V Potência Relés (2.5mm) pelo topo até Header Relés
+    svg += `<path d="M 54 34 L 54 8 L 120 8 L 120 16" stroke="${traceCol}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // Linha +5V Lógica para WT32, Shield USB-C e Pino 14 do 74HCT125
+    svg += `<path d="M 54 34 L 62 34 L 62 42 L 93 42 L 93 52" stroke="${traceCol}" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    if (layoutMode === 'front') {
+      svg += `<path d="M 54 34 L 40 34 L 40 68" stroke="${traceCol}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
+    }
+
+    // Malha GND Estrela (Fonte -V -> C1/C2 -> WT32 -> 74HCT125 -> Borne Fita LED GND -> Header Relés GND)
+    svg += `<path d="M 54 20 L 96 20 L 96 62 L 111.08 62 L 111.08 82" stroke="${traceCol}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg += `<path d="M 96 20 L 114 20 L 114 16" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+
+    // Sinal Fita LED: WT32 IO2 (85.4, 58) -> 74HCT125 Pino 2 (93, 56) -> Pino 3 (93, 60) -> R1 (102, 68) -> Borne SINAL (106, 82)
+    svg += `<path d="M 85.4 58 L 93 58" stroke="${traceCol}" stroke-width="0.8" fill="none"/>`;
+    svg += `<path d="M 93 61 L 101 68 M 106 68 L 106 82" stroke="${traceCol}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
+
+    // 10 Trilhas de Relés (CH1 a CH10) para a barra lateral direita (X=120, Y=20 a 65) - Roteadas em Face Única
+    for (let i = 0; i < 10; i++) {
+      let ry = 21 + i * 4.5;
+      let startY = 38 + i * 2.54;
+      let midX = 98 + (i * 1.5);
+      svg += `<path d="M 85.4 ${startY} L ${midX} ${startY} L ${midX} ${ry} L 120 ${ry}" stroke="${traceCol}" stroke-width="0.65" fill="none" stroke-linejoin="round"/>`;
+    }
+
+    // ILHAS (PADS) DOS COMPONENTES
+    const drawPad = (x, y, dOut=2.2, dIn=0.9) => {
+      svg += `<circle cx="${x}" cy="${y}" r="${dOut/2}" fill="${padCol}"/>`;
+      svg += `<circle cx="${x}" cy="${y}" r="${dIn/2}" fill="${drillCol}"/>`;
+    };
+
+    // Borne AC (X=10, 15.08, Y=78) + Fusível + Fonte IRM-15-5
+    drawPad(10, 78, 3.4, 1.3);
+    drawPad(15.08, 78, 3.4, 1.3);
+    drawPad(10, 60, 2.6, 1.1);
+    drawPad(10, 46, 2.6, 1.1);
+    drawPad(20, 20, 3.2, 1.2);
+    drawPad(20, 34, 3.2, 1.2);
+    drawPad(54, 20, 3.2, 1.2);
+    drawPad(54, 34, 3.2, 1.2);
+
+    // Headers WT32-ETH01 (Duas fileiras de 13 pinos espaçadas em 22.86mm)
+    for (let p = 0; p < 13; p++) {
+      drawPad(62.54, 36 + p * 2.54, 2.1, 0.9);
+      drawPad(85.40, 36 + p * 2.54, 2.1, 0.9);
+    }
+
+    // Pads Shield USB-C
+    for (let p = 0; p < 6; p++) {
+      drawPad(usbX + p * 2.54, usbY, 2.1, 0.9);
+    }
+
+    // CI 74HCT125N (DIP-14) + Resistor 330R
+    for (let p = 0; p < 7; p++) {
+      drawPad(93, 52 + p * 2.54, 2.0, 0.8);
+      drawPad(99.5, 52 + p * 2.54, 2.0, 0.8);
+    }
+    drawPad(101, 68, 2.0, 0.8);
+    drawPad(106, 68, 2.0, 0.8);
+
+    // Borne Exclusivo Fita LED (SINAL + GND) na Borda Frontal Direita
+    drawPad(106.0, 82.0, 3.4, 1.3);
+    drawPad(111.08, 82.0, 3.4, 1.3);
+
+    // Header Lateral 12 Pinos (VCC + GND + 10 Relés)
+    drawPad(120, 16, 2.3, 1.0);
+    drawPad(114, 16, 2.3, 1.0);
+    for (let i = 0; i < 10; i++) {
+      drawPad(120, 21 + i * 4.5, 2.3, 1.0);
+    }
+
+    // SERIGRAFIA DE COMPONENTES (Apenas no modo colorido)
+    if (!isEtch) {
+      svg += `<rect x="16" y="13" width="42" height="27.2" fill="rgba(30,41,59,0.55)" stroke="${silkCol}" stroke-width="0.35"/>`;
+      svg += `<text x="37" y="27" fill="${silkCol}" font-size="2.6" text-anchor="middle" font-weight="bold">FONTE 5V 3A (15W)</text>`;
+
+      svg += `<rect x="60.5" y="33" width="27" height="55" fill="rgba(99,102,241,0.15)" stroke="#818cf8" stroke-width="0.4"/>`;
+      svg += `<text x="74" y="52" fill="#c7d2fe" font-size="2.6" text-anchor="middle" font-weight="bold">WT32-ETH01</text>`;
+      svg += `<rect x="66.0" y="76.5" width="16.0" height="16.0" fill="#475569" stroke="#f8fafc" stroke-width="0.4"/>`;
+      svg += `<text x="74" y="85.5" fill="#fff" font-size="2.5" text-anchor="middle" font-weight="bold">PORTA RJ45</text>`;
+
+      if (layoutMode === 'front') {
+        svg += `<rect x="36" y="63" width="18" height="25" fill="rgba(16,185,129,0.16)" stroke="#34d399" stroke-width="0.4"/>`;
+        svg += `<rect x="40.3" y="83.5" width="9.4" height="7.5" rx="1" fill="#64748b" stroke="#fff" stroke-width="0.35"/>`;
+        svg += `<text x="45" y="75" fill="#a7f3d0" font-size="2.2" text-anchor="middle" font-weight="bold">SHIELD USB-C</text>`;
+      } else {
+        svg += `<rect x="63" y="2" width="22" height="18" fill="rgba(16,185,129,0.16)" stroke="#34d399" stroke-width="0.4"/>`;
+        svg += `<rect x="69.3" y="-1.5" width="9.4" height="6.5" rx="1" fill="#64748b" stroke="#fff" stroke-width="0.35"/>`;
+        svg += `<text x="74" y="13" fill="#a7f3d0" font-size="2.2" text-anchor="middle" font-weight="bold">USB-C TRASEIRO</text>`;
+      }
+
+      svg += `<rect x="103.2" y="77.5" width="10.6" height="9.0" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="0.4"/>`;
+      svg += `<text x="108.5" y="75.5" fill="#6ee7b7" font-size="2.3" text-anchor="middle" font-weight="bold">FITA LED (SINAL+GND)</text>`;
+
+      svg += `<rect x="7.2" y="74" width="10.8" height="8.5" fill="rgba(239,68,68,0.28)" stroke="#f87171" stroke-width="0.4"/>`;
+      svg += `<text x="12.5" y="72" fill="#fca5a5" font-size="2.3" text-anchor="middle" font-weight="bold">AC 110/220V</text>`;
+
+      svg += `<rect x="117" y="13" width="6" height="56" fill="rgba(245,158,11,0.2)" stroke="#fbbf24" stroke-width="0.35"/>`;
+      svg += `<text x="115" y="42" fill="#fde68a" font-size="2.3" text-anchor="end" font-weight="bold">SAÍDA 10 RELÉS</text>`;
+    }
+
+    svg += `</g></svg>`;
+    document.getElementById('pcbSvgContainer').innerHTML = svg;
+  }
+
+  // RENDERIZADOR 2: PAINEL FRONTAL DO GABINETE
+  function renderFrontPanelSvg() {
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="142mm" height="48mm" viewBox="-5 -5 152 58">`;
+    svg += `<rect x="0" y="0" width="142" height="48" rx="2" fill="#1e293b" stroke="#f43f5e" stroke-width="0.5"/>`;
+    svg += `<rect x="6" y="35.8" width="130" height="1.6" fill="#d97706" opacity="0.8"/>`;
+    svg += `<text x="12" y="34.5" fill="#fbbf24" font-size="2.3">Topo da PCB (Z = 10.6 mm da base)</text>`;
+
+    if (layoutMode === 'front') {
+      svg += `<rect x="46.3" y="32.2" width="9.4" height="3.6" rx="1.2" fill="#090d16" stroke="#38bdf8" stroke-width="0.45"/>`;
+      svg += `<text x="51.0" y="29.5" fill="#38bdf8" font-size="2.5" text-anchor="middle" font-weight="bold">USB-C (9.4×3.6mm)</text>`;
+    }
+
+    svg += `<rect x="71.9" y="22.2" width="16.2" height="13.6" rx="0.6" fill="#090d16" stroke="#10b981" stroke-width="0.5"/>`;
+    svg += `<text x="80.0" y="19.5" fill="#10b981" font-size="2.6" text-anchor="middle" font-weight="bold">RJ45 APARENTE (16.2×13.6mm)</text>`;
+
+    svg += `<rect x="109.1" y="27.3" width="10.8" height="8.5" rx="0.5" fill="#090d16" stroke="#f59e0b" stroke-width="0.45"/>`;
+    svg += `<text x="114.5" y="25.0" fill="#fbbf24" font-size="2.4" text-anchor="middle" font-weight="bold">LED (SINAL+GND)</text>`;
+
+    svg += `<text x="71" y="45.5" fill="#cbd5e1" font-size="2.6" text-anchor="middle">PAINEL FRONTAL DO GABINETE — LARGURA 142.0 mm × ALTURA 48.0 mm (Escala 1:1)</text>`;
+    svg += `</svg>`;
+    document.getElementById('frontPanelSvgContainer').innerHTML = svg;
+  }
+
+  // RENDERIZADOR 3: PLANIFICAÇÃO CORTE LASER 6 FACES
+  function renderLaserSvg() {
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300mm" height="175mm" viewBox="0 0 300 175">`;
+    svg += `<rect width="300" height="175" fill="#090d16"/>`;
+
+    svg += `<g transform="translate(6,6)">`;
+    svg += `<rect x="0" y="0" width="142" height="102" fill="none" stroke="#ff0000" stroke-width="0.4"/>`;
+    [[11,11],[131,11],[11,91],[131,91]].forEach(([fx,fy]) => {
+      svg += `<circle cx="${fx}" cy="${fy}" r="1.6" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    });
+    svg += `<text x="71" y="52" fill="#38bdf8" font-size="3.5" text-anchor="middle">1. BASE INFERIOR (142×102 mm) + 4 FUROS M3 PCB</text>`;
+    svg += `</g>`;
+
+    svg += `<g transform="translate(152,6)">`;
+    svg += `<rect x="0" y="0" width="142" height="102" fill="none" stroke="#ff0000" stroke-width="0.4"/>`;
+    for (let s = 0; s < 6; s++) {
+      svg += `<rect x="20" y="${20 + s*6}" width="38" height="2.5" rx="1" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    }
+    svg += `<text x="71" y="75" fill="#38bdf8" font-size="3.5" text-anchor="middle">2. TAMPA SUPERIOR (142×102 mm) + VENTILAÇÃO</text>`;
+    svg += `</g>`;
+
+    svg += `<g transform="translate(6,114)">`;
+    svg += `<rect x="0" y="0" width="142" height="48" fill="none" stroke="#ff0000" stroke-width="0.4"/>`;
+    if (layoutMode === 'front') {
+      svg += `<rect x="46.3" y="32.2" width="9.4" height="3.6" rx="1" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    }
+    svg += `<rect x="71.9" y="22.2" width="16.2" height="13.6" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    svg += `<rect x="109.1" y="27.3" width="10.8" height="8.5" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    svg += `<text x="71" y="13" fill="#38bdf8" font-size="3.2" text-anchor="middle">3. PAINEL FRONTAL (USB-C + RJ45 + LED)</text>`;
+    svg += `</g>`;
+
+    svg += `<g transform="translate(152,114)">`;
+    svg += `<rect x="0" y="0" width="142" height="48" fill="none" stroke="#ff0000" stroke-width="0.4"/>`;
+    svg += `<circle cx="20" cy="26" r="6.2" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    svg += `<rect x="110" y="20" width="18" height="12" rx="1.5" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    if (layoutMode === 'stack') {
+      svg += `<rect x="75.3" y="29.0" width="9.4" height="3.6" rx="1" fill="none" stroke="#ff0000" stroke-width="0.35"/>`;
+    }
+    svg += `<text x="71" y="13" fill="#38bdf8" font-size="3.2" text-anchor="middle">4. PAINEL TRASEIRO (AC PG7 + SAÍDA 10 RELÉS)</text>`;
+    svg += `</g>`;
+
+    svg += `</svg>`;
+    document.getElementById('laserSvgContainer').innerHTML = svg;
+  }
+
+  function downloadSvg(containerId, fileName) {
+    const svgEl = document.getElementById(containerId).querySelector('svg');
+    if (!svgEl) return;
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgEl);
+    const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function initSimulator() {
+    const ledGrid = document.getElementById('simLedGrid');
+    ledGrid.innerHTML = '';
+    for (let i = 0; i < 32; i++) {
+      const d = document.createElement('div');
+      d.className = 'led-dot';
+      d.id = 'sim-led-' + i;
+      ledGrid.appendChild(d);
+    }
+    renderRelayBank();
+    setInterval(stepSimulator, 90);
+  }
+
+  function renderRelayBank() {
+    const count = parseInt(document.getElementById('simRelayCount').value, 10);
+    const relayGrid = document.getElementById('simRelayGrid');
+    relayGrid.innerHTML = '';
+    for (let r = 0; r < count; r++) {
+      const box = document.createElement('div');
+      box.className = 'relay-box';
+      box.id = 'sim-relay-' + r;
+      box.textContent = 'RELÉ ' + (r + 1);
+      relayGrid.appendChild(box);
+    }
+  }
+
+  function toggleSimRunning() {
+    simRunning = !simRunning;
+    document.getElementById('simToggleBtn').textContent = simRunning
+      ? '⏸ Pausar Simulação de Bancada'
+      : '▶ Retomar Simulação de Bancada';
+  }
+
+  function stepSimulator() {
+    if (!simRunning) return;
+    simTick++;
+    const mode = parseInt(document.getElementById('simTestMode').value, 10);
+    const countRelays = parseInt(document.getElementById('simRelayCount').value, 10);
+    const rOn = document.getElementById('chkR').checked ? 255 : 0;
+    const gOn = document.getElementById('chkG').checked ? 255 : 0;
+    const bOn = document.getElementById('chkB').checked ? 255 : 0;
+    const wOn = document.getElementById('chkW').checked ? 180 : 0;
+
+    const rr = Math.min(255, rOn + wOn);
+    const gg = Math.min(255, gOn + wOn);
+    const bb = Math.min(255, bOn + wOn);
+    const activeColor = `rgb(${rr},${gg},${bb})`;
+
+    for (let i = 0; i < 32; i++) {
+      const el = document.getElementById('sim-led-' + i);
+      let lit = false;
+      if (mode === 1) lit = true;
+      else if (mode === 2) lit = (i === (simTick % 32));
+      else if (mode === 3) lit = (i >= bouncePos && i < bouncePos + 4);
+
+      if (lit && (rr + gg + bb > 0)) {
+        el.style.background = activeColor;
+        el.style.boxShadow = `0 0 8px ${activeColor}`;
+      } else {
+        el.style.background = '#1e293b';
+        el.style.boxShadow = 'none';
+      }
+    }
+
+    if (mode === 3) {
+      bouncePos += bounceDir;
+      if (bouncePos >= 28 || bouncePos <= 0) bounceDir = -bounceDir;
+    }
+
+    for (let r = 0; r < countRelays; r++) {
+      const rEl = document.getElementById('sim-relay-' + r);
+      if (!rEl) continue;
+      if (mode === 4 && (Math.floor(simTick / 3) % countRelays) === r) {
+        rEl.classList.add('on');
+      } else {
+        rEl.classList.remove('on');
+      }
+    }
+  }
+
+  renderPcbSvg();
+  renderFrontPanelSvg();
+  renderLaserSvg();
+  initSimulator();
+</script>
+</body>
+</html>
