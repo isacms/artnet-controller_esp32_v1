@@ -1,6 +1,153 @@
-// Gabinete Parametrico Art-Net WT32-ETH01 para Bambu Lab H2S
-// Dimensoes em Milimetros (Escala 1:1)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art-Net Node WT32-ETH01 | PCB & Gabinete Completo</title>
+<style>
+  :root {
+    --bg: #0b0f19; --panel: #111827; --card: #161f33; --border: #26334d;
+    --accent: #6366f1; --accent-hover: #4f46e5; --text: #f8fafc; --muted: #94a3b8;
+    --ok: #10b981; --warn: #f59e0b; --danger: #ef4444; --copper: #d97706;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 12px; line-height: 1.45; }
+  .app-shell { max-width: 1240px; margin: 0 auto; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.45); }
+  .top-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; background: #0d1322; border-bottom: 1px solid var(--border); }
+  .brand h1 { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+  .brand span { font-size: 0.75rem; background: rgba(99, 102, 241, 0.18); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); padding: 3px 9px; border-radius: 999px; font-weight: 600; }
+  .tabs { display: flex; flex-wrap: wrap; background: #0f172a; border-bottom: 1px solid var(--border); padding: 0 10px; }
+  .tab-btn { background: transparent; color: var(--muted); border: none; border-bottom: 3px solid transparent; padding: 12px 14px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: #fff; border-bottom-color: var(--accent); background: rgba(99, 102, 241, 0.08); }
+  .tab-content { display: none; padding: 18px; }
+  .tab-content.active { display: block; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 14px; background: var(--card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { background: var(--accent); color: #fff; border: none; padding: 8px 13px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn:hover { background: var(--accent-hover); }
+  .btn-ok { background: var(--ok); } .btn-ok:hover { background: #059669; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); } .btn-outline:hover { background: rgba(255,255,255,0.05); }
+  .canvas-box { background: #070a12; border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-x: auto; text-align: center; }
+  svg { max-width: 100%; height: auto; border-radius: 6px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .info-card h3 { font-size: 0.85rem; color: #a5b4fc; text-transform: uppercase; margin-bottom: 10px; }
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+  table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  table.data-table th { background: #0f172a; color: #a5b4fc; }
+  .sim-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; }
+  .led-strip-preview { display: grid; grid-template-columns: repeat(16, 1fr); gap: 5px; padding: 12px; background: #05070d; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; }
+  .led-dot { height: 18px; border-radius: 4px; background: #1e293b; border: 1px solid #334155; }
+  .relay-bank { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .relay-box { background: #0f172a; border: 1px solid var(--border); border-radius: 6px; padding: 8px; text-align: center; font-size: 0.75rem; }
+  .relay-box.on { border-color: var(--ok); background: rgba(16, 185, 129, 0.16); color: #6ee7b7; font-weight: 700; }
+  .form-control { width: 100%; padding: 7px 9px; background: #0b0f19; border: 1px solid var(--border); color: var(--text); border-radius: 5px; font-size: 0.82rem; margin-top: 4px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
 
+<div class="app-shell">
+  <div class="top-bar">
+    <div class="brand">
+      <h1>⚡ Art-Net Node WT32-ETH01 + Shield USB-C</h1>
+      <span>Projeto Premium | PCB Face Única (Com Dados de Reparo)</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab('tab-pcb', this)">1. Layout PCB & Diagnóstico</button>
+    <button class="tab-btn" onclick="openTab('tab-front', this)">2. Gabinete & Painel Frontal</button>
+    <button class="tab-btn" onclick="openTab('tab-laser', this)">3. Planificação 6 Faces (Laser)</button>
+    <button class="tab-btn" onclick="openTab('tab-netlist', this)">4. BOM & Equipamentos</button>
+    <button class="tab-btn" onclick="openTab('tab-sim', this)">5. Simulador Web</button>
+    <button class="tab-btn" onclick="openTab('tab-scad', this)">6. Código 3D OpenSCAD</button>
+  </div>
+
+  <!-- TAB 1: PCB COMPLETA COM DIAGNÓSTICO -->
+  <div id="tab-pcb" class="tab-content active">
+    <div class="toolbar">
+      <div class="btn-group">
+        <button class="btn" onclick="setPcbMode('color')">Visão Técnica (Diagnóstico + Tensões)</button>
+        <button class="btn btn-outline" onclick="setPcbMode('etch')">Máscara Corrosão (P&B)</button>
+        <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px; margin-left:10px; cursor:pointer;">
+          <input type="checkbox" id="chkMirror" onchange="renderFullPcb()"> Espelhar P&B
+        </label>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-ok" onclick="downloadSvg('pcbSvgContainer', 'PCB_WT32_Diagnostico.svg')">⬇ Baixar SVG Alta Resolução</button>
+      </div>
+    </div>
+    <div class="canvas-box" id="pcbSvgContainer"></div>
+  </div>
+
+  <!-- TAB 2: PAINEL FRONTAL -->
+  <div id="tab-front" class="tab-content">
+    <div class="toolbar">
+      <div class="btn-group"><span style="font-size:0.82rem; color:var(--muted);">Gabarito do Painel Frontal (Recortes USB-C, RJ45 e LED).</span></div>
+      <div class="btn-group"><button class="btn btn-ok" onclick="downloadSvg('frontPanelSvgContainer', 'Painel_Frontal.svg')">⬇ Baixar SVG</button></div>
+    </div>
+    <div class="canvas-box" id="frontPanelSvgContainer"></div>
+  </div>
+
+  <!-- TAB 3: LASER -->
+  <div id="tab-laser" class="tab-content">
+    <div class="toolbar">
+      <div class="btn-group"><span style="font-size:0.82rem; color:var(--muted);">Planificação de Caixa para Acrílico/MDF 3mm.</span></div>
+      <div class="btn-group"><button class="btn btn-ok" onclick="downloadSvg('laserSvgContainer', 'Caixa_Laser.svg')">⬇ Baixar SVG</button></div>
+    </div>
+    <div class="canvas-box" id="laserSvgContainer"></div>
+  </div>
+
+  <!-- TAB 4: BOM & EQUIPAMENTOS -->
+  <div id="tab-netlist" class="tab-content">
+    <div class="info-card">
+      <h3>Lista de Materiais (BOM) & Equipamentos Compatíveis</h3>
+      <table class="data-table">
+        <thead><tr><th>Componente / Equipamento</th><th>Modelo Exato / Especificação</th><th>Função na Placa</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Controlador Core</strong></td><td>WT32-ETH01 (Módulo ESP32 + Ethernet 10/100)</td><td>Processamento Art-Net e DMX via Rede</td></tr>
+          <tr><td><strong>Shield USB-C (Gravação)</strong></td><td>Módulo CH340C ou CP2102 Type-C (Com pino DTR)</td><td>Gravação de Firmware com Auto-Reset e Depuração</td></tr>
+          <tr><td><strong>Fonte de Alimentação Interna</strong></td><td>Mean Well IRM-15-5 (5V 3A - 15W) ou HLK-15M05</td><td>Alimentação Geral Lógica e Relés</td></tr>
+          <tr><td><strong>Buffer Sinal LED (Isolador)</strong></td><td>CI 74HCT125N (DIP-14)</td><td>Conversão do sinal 3.3V do ESP32 para 5V (Padrão Fitas)</td></tr>
+          <tr><td><strong>Fita LED 24V Compatível</strong></td><td>WS2811 24V ou COB Digital 24V (Sinal + GND)</td><td>Saída Frontal. Necessita fonte externa 24V unindo os GNDs</td></tr>
+          <tr><td><strong>Fita LED 12V Compatível</strong></td><td>WS2815 12V (Possui 2 linhas de dados)</td><td>Ligar SINAL no pino DI da fita. Necessita fonte 12V externa.</td></tr>
+          <tr><td><strong>Módulo de Relés Opto.</strong></td><td>Módulo de 10, 12 ou 16 Canais 5V (Acionamento Low/High)</td><td>Conectar na saída lateral (VCC, GND + 10 canais de CH1 a CH10)</td></tr>
+          <tr><td><strong>Proteção AC</strong></td><td>Fusível Vidro 1A (Porta-Fusível) + Varistor 10D471K</td><td>Proteção contra surtos da rede 110V/220V</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 5: SIMULADOR -->
+  <div id="tab-sim" class="tab-content">
+    <div class="sim-grid">
+      <div class="info-card">
+        <h3>Painel Web & Testes</h3>
+        <label style="font-size:0.75rem; color:var(--muted);">IP do Node</label>
+        <input type="text" class="form-control" value="192.168.0.252">
+        <label style="font-size:0.75rem; color:var(--muted);">Modo de Teste</label>
+        <select id="simTestMode" class="form-control">
+          <option value="3" selected>3. Efeito Bounce (Fita 24V)</option>
+          <option value="4">4. Teste Sequencial de Relés</option>
+        </select>
+        <button class="btn" style="width:100%;" onclick="toggleSimRunning()" id="simToggleBtn">⏸ Pausar Simulação</button>
+      </div>
+      <div class="info-card">
+        <h3>Saída Fita LED & Relés em Tempo Real</h3>
+        <div class="led-strip-preview" id="simLedGrid"></div>
+        <h3 style="margin-top:16px;">Banco de Relés (Univ 3)</h3>
+        <div class="relay-bank" id="simRelayGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: OPENSCAD -->
+  <div id="tab-scad" class="tab-content">
+    <div class="info-card">
+      <h3>Código OpenSCAD (.scad) para Bambu Lab H2S</h3>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Copie o código abaixo e salve como um arquivo <code>.scad</code> para gerar seu modelo 3D.</p>
+      <textarea style="width:100%; height:300px; background:#070a12; color:#38bdf8; border:1px solid var(--border); padding:10px; font-family:monospace; font-size:0.78rem; border-radius:6px;" readonly>
 box_w = 142;
 box_d = 102;
 box_h = 48;
@@ -8,43 +155,217 @@ wall = 2.5;
 
 module gabinete_base() {
     difference() {
-        // Corpo Externo
         cube([box_w, box_d, box_h]);
-        
-        // Cavidade Interna
         translate([wall, wall, wall]) 
             cube([box_w - (wall*2), box_d - (wall*2), box_h]);
         
-        // Janelas Frontais (Y=0)
-        translate([71.9, -1, 10.6]) cube([16.2, wall + 2, 13.6]); // RJ45
-        translate([46.3, -1, 10.6]) cube([9.4, wall + 2, 3.6]);  // USB-C Shield CH340C
-        translate([109.1, -1, 10.6]) cube([10.8, wall + 2, 8.5]); // Borne LED
+        translate([71.9, -1, 10.6]) cube([16.2, wall + 2, 13.6]);
+        translate([46.3, -1, 10.6]) cube([9.4, wall + 2, 3.6]); 
+        translate([109.1, -1, 10.6]) cube([10.8, wall + 2, 8.5]); 
         
-        // Furos Traseiros (Y=102)
         translate([20, box_d - wall - 1, 24]) 
-            rotate([90, 0, 0]) cylinder(h=wall+2, r=6.2, $fn=50); // PG7 AC
+            rotate([90, 0, 0]) cylinder(h=wall+2, r=6.2, $fn=50); 
         translate([110, box_d - wall - 1, 18]) 
-            cube([18, wall + 2, 12]); // Cabos para os 10 Relés
+            cube([18, wall + 2, 12]); 
     }
     pcb_standoffs();
 }
 
 module pcb_standoffs() {
-    offsets = [
-        [11, 11], 
-        [box_w - 11, 11], 
-        [11, box_d - 11], 
-        [box_w - 11, box_d - 11]
-    ];
-    
+    offsets = [[11, 11], [box_w - 11, 11], [11, box_d - 11], [box_w - 11, box_d - 11]];
     for (pos = offsets) {
         translate([pos[0], pos[1], wall])
         difference() {
             cylinder(h=6.0, r=4.5, $fn=30);
-            translate([0,0,-1]) cylinder(h=8.0, r=1.6, $fn=30); // Furo M3
+            translate([0,0,-1]) cylinder(h=8.0, r=1.6, $fn=30);
         }
     }
 }
-
-// Renderiza a base principal do gabinete pronto para corte
 gabinete_base();
+      </textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+  let viewMode = 'color';
+  function openTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function setPcbMode(mode) { viewMode = mode; renderFullPcb(); }
+
+  function renderFullPcb() {
+    const isEtch = viewMode === 'etch';
+    const isMirror = document.getElementById('chkMirror').checked;
+    
+    const bgCol = isEtch ? '#ffffff' : '#081c15';
+    const traceCol = isEtch ? '#000000' : '#d97706';
+    const padCol = isEtch ? '#000000' : '#fbbf24';
+    const drillCol = isEtch ? '#ffffff' : '#081c15';
+    const silkCol = isEtch ? 'none' : '#f8fafc';
+    const alertCol = isEtch ? 'none' : '#ef4444'; 
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="130mm" height="90mm" viewBox="0 0 130 90">`;
+    svg += `<rect width="130" height="90" fill="${bgCol}" stroke="#334155" stroke-width="0.4"/>`;
+
+    if (isMirror) svg += `<g transform="translate(130,0) scale(-1,1)">`;
+    else svg += `<g>`;
+
+    // PADS
+    const drawPad = (x, y, dOut=2.2, dIn=0.9) => {
+      svg += `<circle cx="${x}" cy="${y}" r="${dOut/2}" fill="${padCol}"/>`;
+      svg += `<circle cx="${x}" cy="${y}" r="${dIn/2}" fill="${drillCol}"/>`;
+    };
+
+    // Montagem e Rasgo AC
+    const mounts = [[5,5],[125,5],[5,85],[125,85]];
+    mounts.forEach(([mx,my]) => { drawPad(mx, my, 6.0, 3.2); });
+    svg += `<rect x="29" y="12" width="2.4" height="32" rx="1" fill="${drillCol}" stroke="${isEtch?'#000':'#ef4444'}" stroke-width="0.3"/>`;
+
+    // TRILHAS 100% BOTTOM (Zero Jumpers)
+    svg += `<path d="M 10 78 L 10 60 M 10 46 L 10 20 L 20 20" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+    svg += `<path d="M 15.08 78 L 15.08 34 L 20 34" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+    svg += `<path d="M 54 34 L 54 8 L 120 8 L 120 16" stroke="${traceCol}" stroke-width="2.4" fill="none" stroke-linejoin="round"/>`;
+    svg += `<path d="M 54 34 L 62 34 L 62 42 L 93 42 L 93 52" stroke="${traceCol}" stroke-width="1.2" fill="none" stroke-linejoin="round"/>`;
+    svg += `<path d="M 54 20 L 96 20 L 96 62 L 111.08 62 L 111.08 82" stroke="${traceCol}" stroke-width="2.2" fill="none" stroke-linejoin="round"/>`;
+    svg += `<path d="M 96 20 L 114 20 L 114 16" stroke="${traceCol}" stroke-width="2.0" fill="none" stroke-linecap="round"/>`;
+    svg += `<path d="M 85.4 58 L 93 58 M 93 61 L 101 68 M 106 68 L 106 82" stroke="${traceCol}" stroke-width="1.1" fill="none"/>`;
+
+    // Trilhas Relés e USB
+    for (let i = 0; i < 10; i++) {
+      let ry = 21 + i * 4.5, startY = 38 + i * 2.54, midX = 98 + (i * 1.5);
+      svg += `<path d="M 85.4 ${startY} L ${midX} ${startY} L ${midX} ${ry} L 120 ${ry}" stroke="${traceCol}" stroke-width="0.65" fill="none"/>`;
+    }
+    svg += `<path d="M 40.0 66 L 40.0 41 L 62.54 41 M 42.5 66 L 42.5 44 L 62.54 44 M 45.0 66 L 45.0 47 L 62.54 47 M 47.5 66 L 47.5 50 L 62.54 50" stroke="${traceCol}" stroke-width="0.65" fill="none"/>`;
+    svg += `<path d="M 50.0 66 L 50.0 34 L 54.0 34" stroke="${traceCol}" stroke-width="0.8" fill="none"/>`;
+    svg += `<path d="M 37.5 66 L 37.5 73 L 96 73 L 96 62" stroke="${traceCol}" stroke-width="0.8" fill="none"/>`;
+
+    // Pinos Componentes
+    drawPad(10, 78, 3.4, 1.3); drawPad(15.08, 78, 3.4, 1.3); // AC
+    drawPad(10, 60, 2.6, 1.1); drawPad(10, 46, 2.6, 1.1); // Fusivel
+    drawPad(20, 20, 3.2, 1.2); drawPad(20, 34, 3.2, 1.2); // Varistor
+    drawPad(54, 20, 3.2, 1.2); drawPad(54, 34, 3.2, 1.2); // Fonte AC/DC
+    for (let p = 0; p < 13; p++) { drawPad(62.54, 36 + p*2.54); drawPad(85.40, 36 + p*2.54); } // WT32
+    for (let p = 0; p < 6; p++) drawPad(37.5 + p*2.5, 66); // Shield
+    for (let p = 0; p < 7; p++) { drawPad(93, 52 + p*2.54, 2.0, 0.8); drawPad(99.5, 52 + p*2.54, 2.0, 0.8); } // CI
+    drawPad(101, 68, 2.0, 0.8); drawPad(106, 68, 2.0, 0.8); // Resistor
+    drawPad(106.0, 82.0, 3.4, 1.3); drawPad(111.08, 82.0, 3.4, 1.3); // LED Borne
+    drawPad(120, 16, 2.3, 1.0); drawPad(114, 16, 2.3, 1.0); // Reles VCC/GND
+    for (let i = 0; i < 10; i++) drawPad(120, 21 + i * 4.5, 2.3, 1.0); // Reles Canais
+
+    // ==========================================
+    // SILKSCREEN DE DIAGNÓSTICO E MANUTENÇÃO
+    // ==========================================
+    if (!isEtch) {
+      // Entrada AC + Avisos
+      svg += `<text x="10" y="73" fill="${silkCol}" font-size="2" text-anchor="middle">L (Fase)</text>`;
+      svg += `<text x="15" y="86" fill="${silkCol}" font-size="2" text-anchor="middle">N (Neutro)</text>`;
+      svg += `<text x="12.5" y="89" fill="${alertCol}" font-size="2.2" font-weight="bold" text-anchor="middle">⚡ 110/220V AC</text>`;
+
+      // Fonte Mean Well Polaridades e Test Points
+      svg += `<rect x="16" y="13" width="42" height="27.2" fill="rgba(30,41,59,0.5)" stroke="${silkCol}" stroke-width="0.3"/>`;
+      svg += `<text x="37" y="24" fill="${silkCol}" font-size="2.4" text-anchor="middle" font-weight="bold">MEAN WELL</text>`;
+      svg += `<text x="37" y="28" fill="${silkCol}" font-size="2.0" text-anchor="middle">IRM-15-5 (5V 3A)</text>`;
+      svg += `<text x="54" y="38.5" fill="${okColor='#10b981'}" font-size="2" font-weight="bold" text-anchor="middle">+ 5VDC (TP1)</text>`;
+      svg += `<text x="54" y="17.5" fill="${silkCol}" font-size="2" font-weight="bold" text-anchor="middle">- GND (TP3)</text>`;
+      
+      // WT32-ETH01
+      svg += `<rect x="60.5" y="33" width="27" height="55" fill="rgba(99,102,241,0.15)" stroke="#818cf8" stroke-width="0.4"/>`;
+      svg += `<text x="74" y="52" fill="#c7d2fe" font-size="2.6" text-anchor="middle" font-weight="bold">WT32-ETH01</text>`;
+      svg += `<text x="66" y="34" fill="${silkCol}" font-size="1.8" text-anchor="start">3.3V (TP2)</text>`;
+      svg += `<rect x="66.0" y="76.5" width="16.0" height="16.0" fill="#475569" stroke="#fff" stroke-width="0.4"/>`;
+      svg += `<text x="74" y="85" fill="#fff" font-size="2.5" text-anchor="middle">RJ45</text>`;
+
+      // Shield USB-C
+      svg += `<rect x="34" y="63" width="20" height="25" fill="rgba(16,185,129,0.16)" stroke="#34d399" stroke-width="0.4"/>`;
+      svg += `<text x="44" y="70" fill="#a7f3d0" font-size="2.0" text-anchor="middle">CH340C Type-C</text>`;
+      svg += `<rect x="39.3" y="83.5" width="9.4" height="7.5" fill="#64748b" stroke="#fff" stroke-width="0.35"/>`;
+      
+      // CI 74HCT125N
+      svg += `<rect x="91.5" y="50" width="9.5" height="19" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="0.3"/>`;
+      svg += `<text x="96" y="59" fill="#7dd3fc" font-size="1.8" text-anchor="middle" transform="rotate(-90 96 59)">74HCT125N (5V)</text>`;
+      svg += `<text x="103.5" y="67" fill="${silkCol}" font-size="1.6" text-anchor="middle">R1 330R</text>`;
+
+      // Borne Fita LED
+      svg += `<rect x="103.2" y="77.5" width="10.6" height="9.0" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="0.4"/>`;
+      svg += `<text x="106" y="86.5" fill="#fcd34d" font-size="2" font-weight="bold" text-anchor="middle">SINAL</text>`;
+      svg += `<text x="111.08" y="86.5" fill="#fcd34d" font-size="2" font-weight="bold" text-anchor="middle">- GND</text>`;
+      svg += `<text x="108.5" y="75.5" fill="#fcd34d" font-size="2.1" text-anchor="middle" font-weight="bold">FITA LED</text>`;
+
+      // Conector Lateral Relés
+      svg += `<text x="124" y="16.5" fill="${okColor}" font-size="2" text-anchor="start" font-weight="bold">+ 5V</text>`;
+      svg += `<text x="110" y="16.5" fill="${silkCol}" font-size="2" text-anchor="end" font-weight="bold">- GND</text>`;
+      svg += `<text x="117" y="42" fill="#fcd34d" font-size="2.0" text-anchor="end" transform="rotate(-90 117 42)">SAÍDA 10 RELÉS (CH1-CH10)</text>`;
+      
+      // Info Geral da Placa
+      svg += `<text x="10" y="27" fill="${silkCol}" font-size="1.8" text-anchor="middle">RV1 10D</text>`;
+      svg += `<text x="10" y="54" fill="${silkCol}" font-size="1.8" text-anchor="middle">F1 1A</text>`;
+      svg += `<text x="10" y="10" fill="${silkCol}" font-size="2.2" font-weight="bold" text-anchor="start">ArtNet Node v2.0</text>`;
+    }
+
+    svg += `</g></svg>`;
+    document.getElementById('pcbSvgContainer').innerHTML = svg;
+  }
+
+  function renderFrontPanelSvg() {
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="142mm" height="48mm" viewBox="0 0 142 48">`;
+    svg += `<rect width="142" height="48" fill="#1e293b" stroke="#f43f5e" stroke-width="0.5"/>`;
+    svg += `<rect x="46.3" y="32.2" width="9.4" height="3.6" fill="#090d16" stroke="#38bdf8" stroke-width="0.45"/>`;
+    svg += `<text x="51" y="29" fill="#38bdf8" font-size="2.2" text-anchor="middle">USB-C</text>`;
+    svg += `<rect x="71.9" y="22.2" width="16.2" height="13.6" fill="#090d16" stroke="#10b981" stroke-width="0.5"/>`;
+    svg += `<text x="80" y="19" fill="#10b981" font-size="2.5" text-anchor="middle">RJ45 (16.2x13.6mm)</text></svg>`;
+    document.getElementById('frontPanelSvgContainer').innerHTML = svg;
+  }
+
+  function renderLaserSvg() {
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280mm" height="120mm" viewBox="0 0 280 120">`;
+    svg += `<rect width="280" height="120" fill="#090d16"/>`;
+    svg += `<rect x="10" y="10" width="142" height="102" fill="none" stroke="#ff0000" stroke-width="0.4"/>`;
+    svg += `<text x="81" y="60" fill="#38bdf8" font-size="3.5" text-anchor="middle">Base Inferior 142x102mm</text></svg>`;
+    document.getElementById('laserSvgContainer').innerHTML = svg;
+  }
+
+  function downloadSvg(containerId, fileName) {
+    const svgEl = document.getElementById(containerId).querySelector('svg');
+    if (!svgEl) return;
+    const blob = new Blob([new XMLSerializer().serializeToString(svgEl)], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  }
+
+  let simRunning = true, simTick = 0;
+  function initSimulator() {
+    const ledGrid = document.getElementById('simLedGrid');
+    for (let i = 0; i < 32; i++) {
+      const d = document.createElement('div'); d.className = 'led-dot'; d.id = 'sim-led-' + i; ledGrid.appendChild(d);
+    }
+    const relayGrid = document.getElementById('simRelayGrid');
+    for (let r = 0; r < 10; r++) {
+      const box = document.createElement('div'); box.className = 'relay-box'; box.id = 'sim-relay-' + r; box.textContent = 'RELÉ ' + (r + 1); relayGrid.appendChild(box);
+    }
+    setInterval(() => {
+      if(!simRunning) return; simTick++;
+      const isRelayMode = document.getElementById('simTestMode').value === '4';
+      for (let i = 0; i < 32; i++) {
+        let active = isRelayMode ? (i%4===0) : (i === simTick % 32 || i === (simTick+1) % 32);
+        document.getElementById('sim-led-'+i).style.background = active ? '#10b981' : '#1e293b';
+        document.getElementById('sim-led-'+i).style.boxShadow = active ? '0 0 8px #10b981' : 'none';
+      }
+      for (let r = 0; r < 10; r++) {
+        const el = document.getElementById('sim-relay-'+r);
+        if(isRelayMode && (Math.floor(simTick / 4) % 10) === r) el.classList.add('on');
+        else el.classList.remove('on');
+      }
+    }, 120);
+  }
+  function toggleSimRunning() { simRunning = !simRunning; document.getElementById('simToggleBtn').textContent = simRunning ? "⏸ Pausar Simulação" : "▶ Retomar Simulação"; }
+
+  renderFullPcb(); renderFrontPanelSvg(); renderLaserSvg(); initSimulator();
+</script>
+</body>
+</html>
