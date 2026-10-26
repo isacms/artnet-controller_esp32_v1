@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art-Net Node WT32-ETH01 + Shield USB-C | PCB Face Única & Gabinete 3D</title>
+<title>Art-Net Node WT32-ETH01 + Shield USB-C | PCB Face Única & Gabinete</title>
 <style>
   :root {
     --bg: #0b0f19; --panel: #111827; --card: #161f33; --border: #26334d;
@@ -26,21 +26,15 @@
   .btn-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .btn { background: var(--accent); color: #fff; border: none; padding: 8px 13px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
   .btn:hover { background: var(--accent-hover); }
-  .btn-outline { background: #1e293b; border: 1px solid var(--border); color: var(--text); }
-  .btn-outline:hover { background: #334155; }
   .btn-ok { background: var(--ok); } .btn-ok:hover { background: #059669; }
   .canvas-box { background: #070a12; border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-x: auto; text-align: center; }
   svg { max-width: 100%; height: auto; border-radius: 6px; }
   .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 14px; }
   .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
   .info-card h3 { font-size: 0.85rem; color: #a5b4fc; text-transform: uppercase; margin-bottom: 10px; }
-  .spec-list { list-style: none; font-size: 0.82rem; }
-  .spec-list li { padding: 5px 0; border-bottom: 1px dashed rgba(148,163,184,0.15); display: flex; justify-content: space-between; gap: 8px; }
   table.data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
   table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
   table.data-table th { background: #0f172a; color: #a5b4fc; }
-  table.data-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
-  #threeCanvasContainer { width: 100%; height: 480px; background: #05070d; border-radius: 8px; overflow: hidden; }
   .sim-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; }
   .led-strip-preview { display: grid; grid-template-columns: repeat(16, 1fr); gap: 5px; padding: 12px; background: #05070d; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; }
   .led-dot { height: 18px; border-radius: 4px; background: #1e293b; border: 1px solid #334155; }
@@ -48,9 +42,7 @@
   .relay-box { background: #0f172a; border: 1px solid var(--border); border-radius: 6px; padding: 8px; text-align: center; font-size: 0.75rem; }
   .relay-box.on { border-color: var(--ok); background: rgba(16, 185, 129, 0.16); color: #6ee7b7; font-weight: 700; }
   .form-control { width: 100%; padding: 7px 9px; background: #0b0f19; border: 1px solid var(--border); color: var(--text); border-radius: 5px; font-size: 0.82rem; margin-top: 4px; margin-bottom: 10px; }
-  .chk-inline { display: flex; gap: 12px; flex-wrap: wrap; margin: 6px 0 12px; font-size: 0.82rem; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -64,12 +56,11 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="openTab('tab-pcb', this)">1. PCB Face Única (1:1)</button>
-    <button class="tab-btn" onclick="openTab('tab-3d', this)">2. Visualização 3D Volumétrica</button>
-    <button class="tab-btn" onclick="openTab('tab-front', this)">3. Gabinete & Painel Frontal</button>
-    <button class="tab-btn" onclick="openTab('tab-laser', this)">4. Planificação 6 Faces (Laser)</button>
-    <button class="tab-btn" onclick="openTab('tab-netlist', this)">5. Netlist & CorelDraw</button>
-    <button class="tab-btn" onclick="openTab('tab-sim', this)">6. Simulador Web</button>
-    <button class="tab-btn" onclick="openTab('tab-scad', this)">7. Código OpenSCAD</button>
+    <button class="tab-btn" onclick="openTab('tab-front', this)">2. Gabinete & Painel Frontal</button>
+    <button class="tab-btn" onclick="openTab('tab-laser', this)">3. Planificação 6 Faces (Laser)</button>
+    <button class="tab-btn" onclick="openTab('tab-netlist', this)">4. Netlist & CorelDraw</button>
+    <button class="tab-btn" onclick="openTab('tab-sim', this)">5. Simulador Web</button>
+    <button class="tab-btn" onclick="openTab('tab-scad', this)">6. Código OpenSCAD</button>
   </div>
 
   <!-- TAB 1: PCB -->
@@ -82,13 +73,7 @@
     <div class="canvas-box" id="pcbSvgContainer"></div>
   </div>
 
-  <!-- TAB 2: VISUALIZAÇÃO 3D -->
-  <div id="tab-3d" class="tab-content">
-    <div class="toolbar"><span style="font-size:0.82rem; color:var(--muted);">Simulação volumétrica 3D do gabinete e componentes (Arraste o mouse para rotacionar).</span></div>
-    <div class="canvas-box" style="padding:4px;"><div id="threeCanvasContainer"></div></div>
-  </div>
-
-  <!-- TAB 3: PAINEL FRONTAL -->
+  <!-- TAB 2: PAINEL FRONTAL -->
   <div id="tab-front" class="tab-content">
     <div class="toolbar">
       <div class="btn-group"><span style="font-size:0.82rem; color:var(--muted);">Gabarito Mecânico do Painel Frontal.</span></div>
@@ -97,7 +82,7 @@
     <div class="canvas-box" id="frontPanelSvgContainer"></div>
   </div>
 
-  <!-- TAB 4: LASER -->
+  <!-- TAB 3: LASER -->
   <div id="tab-laser" class="tab-content">
     <div class="toolbar">
       <div class="btn-group"><span style="font-size:0.82rem; color:var(--muted);">Planificação das 6 faces para corte laser.</span></div>
@@ -106,7 +91,7 @@
     <div class="canvas-box" id="laserSvgContainer"></div>
   </div>
 
-  <!-- TAB 5: NETLIST -->
+  <!-- TAB 4: NETLIST -->
   <div id="tab-netlist" class="tab-content">
     <div class="info-card">
       <h3>Tabela Completa de Conexões (Netlist Pin-a-Pin)</h3>
@@ -122,7 +107,7 @@
     </div>
   </div>
 
-  <!-- TAB 6: SIMULADOR -->
+  <!-- TAB 5: SIMULADOR -->
   <div id="tab-sim" class="tab-content">
     <div class="sim-grid">
       <div class="info-card">
@@ -145,10 +130,10 @@
     </div>
   </div>
 
-  <!-- TAB 7: OPENSCAD -->
+  <!-- TAB 6: OPENSCAD -->
   <div id="tab-scad" class="tab-content">
     <div class="info-card">
-      <h3>Código OpenSCAD (.scad)</h3>
+      <h3>Código OpenSCAD (.scad) para Bambu Lab H2S</h3>
       <textarea style="width:100%; height:260px; background:#070a12; color:#38bdf8; border:1px solid var(--border); padding:10px; font-family:monospace; font-size:0.78rem; border-radius:6px;" readonly>
 box_w = 142; box_d = 102; box_h = 48; wall = 2.5;
 module gabinete_base() {
@@ -172,7 +157,6 @@ gabinete_base();
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     btn.classList.add('active');
-    if(tabId === 'tab-3d' && !window.threeInitialized) { initThreeViewer(); window.threeInitialized = true; }
   }
 
   function renderPcbSvg() {
@@ -207,22 +191,6 @@ gabinete_base();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = fileName;
     document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  }
-
-  function initThreeViewer() {
-    const container = document.getElementById('threeCanvasContainer');
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070a12);
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(180, 140, 180);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const boxMesh = new THREE.Mesh(new THREE.BoxGeometry(14.2, 4.8, 10.2), new THREE.MeshPhysicalMaterial({ color: 0x1e293b, transparent: true, opacity: 0.35 }));
-    scene.add(boxMesh);
-    function animate() { requestAnimationFrame(animate); boxMesh.rotation.y += 0.005; renderer.render(scene, camera); }
-    animate();
   }
 
   let simRunning = true;
